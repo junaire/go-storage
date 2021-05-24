@@ -112,6 +112,14 @@ func NewObject(client Storager, done bool) *Object {
 	return o
 }
 
+func (o *Object) Expire() {
+	o.m.Lock()
+	defer o.m.Unlock()
+
+	atomic.StoreUint32(&o.done, 0)
+	atomic.StoreUint64(&o.bit, 0)
+}
+
 // Borrowed from sync.Once
 func (o *Object) stat() {
 	if atomic.LoadUint32(&o.done) == 0 {
